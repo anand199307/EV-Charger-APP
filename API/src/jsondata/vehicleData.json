@@ -1,0 +1,142 @@
+{
+  "vehicles": [
+    {
+      "make": "TATA",
+      "model": "Tata Tigor EV",
+      "battery_capacity": "26 kWh",
+      "variants": "XE,XT,XZ+,XZ+Lux"
+    },
+    {
+      "make": "TATA",
+      "model": "Tata Nexon EV",
+      "battery_capacity": "40.5 kwh",
+      "variants": "Max XZ+,MaxXz+plus"
+    },
+    {
+      "make": "TATA",
+      "model": "Tata Tiago EV",
+      "battery_capacity": "19.2 kwh",
+      "variants": "XE Base,XT Base"
+    },
+    {
+      "make": "TATA",
+      "model": "Tata Tiago EV",
+      "battery_capacity": "24 kwh",
+      "variants": "XT Long Range"
+    },
+    {
+      "make": "MG",
+      "model": "MG ZS EV 2022",
+      "battery_capacity": "50.3 kwh",
+      "variants": "Zs Ev Excite,ZS EV Exclusive"
+    },
+    {
+      "make": "MG",
+      "model": "MG ZS EV",
+      "battery_capacity": "44.5 kwh",
+      "variants": "Zs Ev Excite"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Hyundai Kona Electric",
+      "battery_capacity": "39.2 kwh",
+      "variants": "Premium,Premium Dual Tone"
+    },
+    {
+      "make": "Hyundai",
+      "model": "Hyundai IONIQ 5",
+      "battery_capacity": "72.6 kwh",
+      "variants": "Long Range RWD"
+    },
+    {
+      "make": "Mahindra",
+      "model": "Mahindra XUV400 EV",
+      "battery_capacity": "34.5-39.4 kwh",
+      "variants": "EC,EL"
+    },
+    {
+      "make": "Audi",
+      "model": "Audi e-tron GT",
+      "battery_capacity": "93 kwh",
+      "variants": "Quattro"
+    },
+    {
+      "make": "Audi",
+      "model": "Audi e-tron GT",
+      "battery_capacity": "93 kwh",
+      "variants": ""
+    },
+    {
+      "make": "Audi",
+      "model": "Audi e-tron",
+      "battery_capacity": "71 kwh",
+      "variants": ""
+    },
+    {
+      "make": "BYD",
+      "model": "BYD E6",
+      "battery_capacity": "71.7 kwh",
+      "variants": ""
+    },
+    {
+      "make": "Mercedes",
+      "model": "Mercedes-Benz EQS",
+      "battery_capacity": "107.8 kwh",
+      "variants": "580 4Matic"
+    },
+    {
+      "make": "Mercedes",
+      "model": "Mercedes-Benz EQB",
+      "battery_capacity": "66.5kwh",
+      "variants": "350 4Matic"
+    },
+    {
+      "make": "Mercedes",
+      "model": "Mercedes-Benz EQE SUV",
+      "battery_capacity": "90.56 kWh",
+      "variants": "500 4Matic"
+    },
+    {
+      "make": "Mercedes",
+      "model": "Mercedes-Benz AMG EQS",
+      "battery_capacity": "107.8 kwh",
+      "variants": "53 4Matic Plus"
+    },
+    {
+      "make": "Jaguar",
+      "model": "Jaguar I-Pace",
+      "battery_capacity": "90 kwh",
+      "variants": "SE,Black,HSE"
+    },
+    {
+      "make": "BMW",
+      "model": "BMW i7",
+      "battery_capacity": "101.7kWh",
+      "variants": "xDrive60,M70 xDrive"
+    },
+    {
+      "make": "BMW",
+      "model": "BMW iX",
+      "battery_capacity": "71 kW",
+      "variants": "xDrive40"
+    },
+    {
+      "make": "BMW",
+      "model": "BMW i4",
+      "battery_capacity": "70.2kWh",
+      "variants": "eDrive35 M Sport,eDrive40 M Sport"
+    },
+    {
+      "make": "BMW",
+      "model": "BMW iX1",
+      "battery_capacity": "66.4 kw",
+      "variants": "xDrive30 M Sport"
+    },
+    {
+      "make": "Kia",
+      "model": "Kia EV6",
+      "battery_capacity": "77.4 kw",
+      "variants": "GT line,GT line AWD"
+    }
+  ]
+}

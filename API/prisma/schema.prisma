@@ -1,0 +1,502 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id           BigInt     @id @default(autoincrement())
+  location_id  BigInt
+  name         String     @unique @db.VarChar(36)
+  email        String     @unique
+  phone_number String?    @unique
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  account      Accounts[]
+  admin        Admins[]
+  location     Locations  @relation(fields: [location_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([name, email], map: "index_organization_on_name_and_email")
+}
+
+model Accounts {
+  id              BigInt       @id @default(autoincrement())
+  organization_id BigInt
+  location_Id     BigInt
+  uuid            String       @unique @default(uuid())
+  name            String       @db.VarChar(36)
+  email           String       @unique @db.VarChar(36)
+  phone_number    String       @db.VarChar(36)
+  status          Int          @default(0) @db.SmallInt
+  credit_limit    Decimal
+  bank_account    String
+  bank_name       String
+  payee_name      String       @db.VarChar(36)
+  ifsc_code       String
+  tax_number      String
+  gst_number      String
+  logo            String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  admins          Admins[]
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  location        Locations    @relation(fields: [location_Id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User            Users[]
+  Host            Hosts[]
+
+  @@index([name, email, uuid], map: "index_account_on_name_and_email")
+  @@index([location_Id, status], map: "index_account_on_location_id_and_status")
+  @@index([phone_number], map: "index_account_on_phone_number")
+  @@index([uuid], map: "index_account_on_uuid")
+  @@index([credit_limit], map: "index_account_credit_limit")
+}
+
+model AdminSessions {
+  id              BigInt    @id @default(autoincrement())
+  admin_id        BigInt
+  logged_in       Int
+  salt            String    @db.VarChar(36)
+  session_key     String    @db.VarChar(36)
+  auth_token      String
+  expires_at      DateTime? @db.Timestamp(6)
+  user_agent      String?   @db.VarChar(36)
+  device_name     String?   @db.VarChar(36)
+  ip_address      String?   @db.VarChar(36)
+  request_country String?   @db.VarChar(36)
+  lat             Decimal?  @db.Decimal(10, 6)
+  long            Decimal?  @db.Decimal(10, 6)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  admin           Admins    @relation(fields: [admin_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_42d5c8f0c6")
+
+  @@index([admin_id], map: "index_adminsesion_on_admin_id")
+  @@index([auth_token], map: "index_adminsession_on_auth_token")
+  @@index([expires_at], map: "index_adminsession_on_expires_at")
+  @@index([logged_in], map: "index_adminsession_on_logged_in")
+  @@index([salt], map: "index_adminsession_on_salt")
+  @@index([session_key], map: "index_adminsession_on_session_key")
+}
+
+model Admins {
+  id                     BigInt          @id @default(autoincrement())
+  account_id             BigInt
+  organization_id        BigInt
+  uuid                   String          @unique @db.VarChar(36)
+  email                  String          @unique @db.VarChar(36)
+  phone_number           String          @unique @db.VarChar(36)
+  is_superadmin          Boolean         @default(false)
+  role                   Int             @default(0)
+  email_code             String?         @db.VarChar(36)
+  email_code_expire_at   String?         @db.VarChar(36)
+  email_verified         Boolean         @default(false)
+  status                 Int             @default(0) @db.SmallInt
+  password_digest        String?
+  reset_password         Boolean?        @default(false)
+  first_name             String?         @db.VarChar(36)
+  last_name              String?         @db.VarChar(36)
+  num_logins             BigInt?         @default(0)
+  num_logouts            BigInt?         @default(0)
+  last_login_at          DateTime?       @default(now())
+  last_logout_at         DateTime?       @default(now())
+  reset_password_token   String?
+  reset_password_sent_at DateTime?       @default(now())
+  created_at             DateTime        @default(now())
+  updated_at             DateTime        @updatedAt
+  account                Accounts        @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  organization           Organization    @relation(fields: [organization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  admin_session          AdminSessions[]
+  HostAdmin              HostAdmins[]
+
+  @@index([first_name, last_name], map: "index_admin_on_first_name_and_last_name")
+  @@index([is_superadmin], map: "index_admin_on_is_superadmin")
+  @@index([email], map: "index_admin_on_email")
+  @@index([phone_number], map: "index_admin_on_phone_number")
+  @@index([status], map: "index_admin_on_status")
+  @@index([role], map: "index_admin_on_role")
+}
+
+model UserSessions {
+  id              BigInt    @id @default(autoincrement())
+  user_id         BigInt
+  logged_in       Int
+  salt            String    @db.VarChar(36)
+  session_key     String    @db.VarChar(36)
+  auth_token      String
+  expires_at      DateTime? @db.Timestamp(6)
+  user_agent      String?
+  device_name     String?   @db.VarChar(36)
+  ip_address      String?   @db.VarChar(36)
+  request_country String?   @db.VarChar(36)
+  lat             Decimal?  @db.Decimal(10, 6)
+  long            Decimal?  @db.Decimal(10, 6)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  user            Users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([user_id], map: "index_usersession_on_user_id")
+  @@index([auth_token], map: "index_usersession_on_auth_token")
+  @@index([expires_at], map: "index_usersession_on_expires_at")
+  @@index([logged_in], map: "index_usersession_on_logged_in")
+  @@index([salt], map: "index_usersession_on_salt")
+  @@index([session_key], map: "index_usersession_on_session_key")
+}
+
+model Users {
+  id                   BigInt             @id @default(autoincrement())
+  account_id           BigInt
+  uuid                 String             @db.VarChar(36)
+  wallet_amount        Decimal            @default(0.00)
+  location_id          BigInt
+  email                String?            @unique
+  phone_number         String             @unique
+  first_name           String?            @db.VarChar(36)
+  last_name            String?            @db.VarChar(36)
+  status               Int                @default(0) @db.SmallInt
+  phone_number_code    Int?
+  is_phone_verified    Boolean            @default(false)
+  phone_code_expire_at DateTime           @default(now())
+  total_cashback_point Decimal?
+  num_logins           BigInt             @default(0)
+  num_logouts          BigInt             @default(0)
+  last_login_at        DateTime           @updatedAt
+  last_logout_at       DateTime           @updatedAt
+  created_at           DateTime           @default(now())
+  updated_at           DateTime           @updatedAt
+  user_session         UserSessions[]
+  user_vehicle         UserVehicles[]
+  location             Locations          @relation(fields: [location_id], references: [id])
+  account              Accounts           @relation(fields: [account_id], references: [id])
+  ChargingSessions     ChargingSessions[]
+  IdTags               IdTags[]
+
+  @@index([wallet_amount], map: "index_user_on_wallet_amount")
+  @@index([email, phone_number], map: "index_user_on_emain_and_phone_number")
+  @@index([account_id, uuid], map: "index_users_on_account_id_and_uuid")
+  @@index([location_id], map: "index_users_on_and_location_id")
+  @@index([status], map: "index_users_on_status")
+}
+
+model Vehicles {
+  id               BigInt         @id @default(autoincrement())
+  manufacturer     String         @db.VarChar(36)
+  car_model        String         @db.VarChar(36)
+  battery_capacity String?        @db.VarChar(36)
+  variants         String?        @db.VarChar(36)
+  avatar           String?
+  status           Boolean        @default(false)
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  UserVehicle      UserVehicles[]
+
+  @@index([manufacturer], map: "index_vehicle_on_manufacturer")
+  @@index([car_model], map: "index_vehicle_on_car_model")
+  @@index([status], map: "index_vechile_on_status")
+}
+
+model UserVehicles {
+  id         BigInt   @id @default(autoincrement())
+  user_id    BigInt
+  vehicle_id BigInt
+  status     Boolean  @default(false)
+  vin_number BigInt?
+  user       Users    @relation(fields: [user_id], references: [id])
+  vehicle    Vehicles @relation(fields: [vehicle_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([user_id], map: "index_uservehicle_on_user_id")
+  @@index([vehicle_id], map: "index_uservehicle_on_vehicle_id")
+  @@index([vin_number], map: "index_uservehicle_on_vin_number")
+  @@index([status], map: "index_uservehicle_on_status")
+}
+
+model Hosts {
+  id             BigInt           @id @default(autoincrement())
+  account_id     BigInt
+  phone_number   String           @unique @db.VarChar(36)
+  uuid           String?          @unique @db.VarChar(36)
+  email          String           @unique
+  bank_account   String           @db.VarChar(36)
+  status         Int              @default(0) @db.SmallInt
+  host_name      String
+  ifsc_code      String           @db.VarChar(36)
+  taxNumber      String?          @db.VarChar(36)
+  gstNumber      String?          @db.VarChar(36)
+  location_Id    BigInt
+  bank_name      String
+  payee_name     String           @db.VarChar(36)
+  logo           String?
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  account        Accounts         @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  location       Locations        @relation(fields: [location_Id], references: [id])
+  HostProperties HostProperties[] // Define the relation without specifying fields or references
+  HostAdmin      HostAdmins[]
+
+  @@index([status], map: "index_host_on_status")
+  @@index([bank_account, phone_number], map: "index_host_on_bank_account_and_phone_number")
+  @@index([email], map: "index_host_on_email")
+  @@index([host_name], map: "index_host_on_host_name")
+  @@index([uuid], map: "index_host_on_uuid")
+}
+
+model HostAdmins {
+  id         BigInt   @id @default(autoincrement())
+  host_id    BigInt
+  admin_id   BigInt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  admin      Admins   @relation(fields: [admin_id], references: [id])
+  host       Hosts    @relation(fields: [host_id], references: [id])
+}
+
+model HostProperties {
+  id             BigInt      @id @default(autoincrement())
+  uuid           String      @unique @db.VarChar(36)
+  host_id        BigInt
+  location_id    BigInt
+  status         Int
+  name           String
+  eb_number      String      @db.VarChar(36)
+  eb_bill_copy   String
+  phone_number   String?     @db.VarChar(36)
+  property_photo String?
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  host           Hosts       @relation(fields: [host_id], references: [id])
+  location       Locations   @relation(fields: [location_id], references: [id])
+  amenities      Amenities[] // Establishing the relationship
+  Chargers       Chargers[]
+
+  @@index([name], map: "index_host_property_name")
+  @@index([status], map: "index_host_on_status")
+  @@index([eb_number], map: "index_host_on_eb_number")
+}
+
+model Locations {
+  id                BigInt           @id @default(autoincrement())
+  country_id        BigInt
+  province_id       BigInt
+  city_id           BigInt
+  address_line1     String           @db.VarChar(36)
+  address_line2     String?          @db.VarChar(36)
+  postal_index_code String           @db.VarChar(36)
+  lat               Decimal?         @db.Decimal(15, 12)
+  long              Decimal?         @db.Decimal(15, 12)
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  country           Country?         @relation(fields: [country_id], references: [id])
+  province          Province?        @relation(fields: [province_id], references: [id])
+  citie             City?            @relation(fields: [city_id], references: [id])
+  Account           Accounts[]
+  Organization      Organization[]
+  User              Users[]
+  HostProperites    HostProperties[]
+  Host              Hosts[]
+
+  @@index([address_line1], map: "index_location_on_address_line1")
+  @@index([city_id], map: "index_location_on_city_id")
+  @@index([country_id], map: "index_location_on_country_id")
+}
+
+model Country {
+  id              BigInt      @id @default(autoincrement())
+  name            String
+  code            String      @unique @db.VarChar(36)
+  region          String?
+  phone_code      String?     @db.VarChar(36)
+  numeric_code    String?     @db.VarChar(36)
+  currency        String?     @db.VarChar(36)
+  currency_name   String?     @db.VarChar(36)
+  currency_symbol String?     @db.VarChar(36)
+  emoji           String?     @db.VarChar(36)
+  timezones       Json?
+  lat             Decimal?    @db.Decimal(15, 12)
+  long            Decimal?    @db.Decimal(15, 12)
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+  location        Locations[]
+  province        Province[]
+
+  @@index([name, code], map: "index_countries_on_name_and_code")
+}
+
+model Province {
+  id         BigInt      @id @default(autoincrement())
+  country_id BigInt
+  name       String
+  code       String?     @db.VarChar(36)
+  lat        Decimal?    @db.Decimal(15, 12)
+  long       Decimal?    @db.Decimal(15, 12)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  city       City[]
+  location   Locations[]
+  country    Country     @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_6fd6e7d17e")
+
+  @@index([code], map: "index_provinces_on_code")
+  @@index([country_id], map: "index_provinces_on_country_id")
+  @@index([name], map: "index_provinces_on_name")
+}
+
+model City {
+  id          BigInt      @id @default(autoincrement())
+  province_id BigInt
+  name        String
+  code        String?     @db.VarChar(36)
+  lat         Decimal?    @db.Decimal(15, 12)
+  long        Decimal?    @db.Decimal(15, 12)
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+  provinces   Province    @relation(fields: [province_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_ea36d40e0b")
+  locations   Locations[]
+
+  @@index([code], map: "index_cities_on_code")
+  @@index([name], map: "index_cities_on_name")
+  @@index([province_id], map: "index_cities_on_province_id")
+}
+
+model Chargers {
+  id                 BigInt             @id @default(autoincrement())
+  property_id        BigInt
+  uuid               String             @unique
+  status             Int                @default(1)
+  name               String
+  visibility         Boolean            @default(true)
+  occp_complaint     Boolean            @default(true)
+  promotional        Boolean            @default(true)
+  latitude           Float
+  longitude          Float
+  land_mark          String?
+  meterValueInterval Int?
+  lastHeartbeat      DateTime?
+  vendor             String?
+  model              String?
+  oem_company        String?
+  serial_number      String?
+  enabled            Boolean            @default(true)
+  verified           Boolean            @default(true)
+  type               String?            @default("AC")
+  created_at         DateTime           @default(now())
+  updated_at         DateTime           @updatedAt
+  property           HostProperties     @relation(fields: [property_id], references: [id])
+  Connectors         Connectors[]
+  ChargerConfigs     ChargerConfigs[]
+  ChargingSessions   ChargingSessions[]
+
+  @@index([status], map: "index_chargers_status")
+  @@index([name], map: "index_chargers_name")
+  @@index([property_id], map: "index_chargers_property_id")
+}
+
+model Connectors {
+  id                   BigInt             @id @default(autoincrement())
+  charger_id           BigInt
+  connectorId          Int
+  oem_connector_number String
+  connector_type       BigInt
+  status               String
+  tariff_rate          Decimal            @default(0.0)
+  max_unit_hour        Int                @default(0)
+  capacity             Int                @default(0)
+  hourly_charge        Boolean            @default(true)
+  unit_charge          Boolean            @default(true)
+  created_at           DateTime           @default(now())
+  updated_at           DateTime           @updatedAt
+  connectorType        ConnectorTypes     @relation(fields: [connector_type], references: [id])
+  charger              Chargers           @relation(fields: [charger_id], references: [id])
+  ChargingSessions     ChargingSessions[]
+
+  @@index([connector_type], map: "index_connectors_type")
+  @@index([status], map: "index_connectors_status")
+  @@index([oem_connector_number], map: "index_oem_connector_number")
+}
+
+model ConnectorTypes {
+  id         BigInt       @id @default(autoincrement())
+  name       String       @unique
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  Connectors Connectors[]
+
+  @@index([name], map: "index_connectorstype_name")
+}
+
+model ChargingSessions {
+  id            BigInt    @id @default(autoincrement())
+  userId        BigInt
+  connectorId   BigInt
+  chargerId     BigInt  
+  idTagId       String
+  transactionId BigInt?
+  limit         Float
+  limitType     String
+  startTime     DateTime?
+  endTime       DateTime?
+  meterStart    Float?
+  meterStop     Float?
+  reason        String?
+  total         Float?
+  refund        Float?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  user        Users         @relation(fields: [userId], references: [id])
+  connector   Connectors    @relation(fields: [connectorId], references: [id])
+  charger     Chargers      @relation(fields: [chargerId], references: [id])
+  MeterValues MeterValues[]
+}
+
+model IdTags {
+  id          BigInt    @id @default(autoincrement())
+  userId      BigInt
+  tag_value   String
+  is_blocked  Boolean   @default(false)
+  expiry_date DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  user        Users     @relation(fields: [userId], references: [id])
+
+  @@index([tag_value], map: "index_idTag_value")
+}
+
+model MeterValues {
+  id                BigInt           @id @default(autoincrement())
+  ChargingSessionId BigInt
+  value             String
+  unit              String?
+  format            String?
+  context           String?
+  measurand         String?
+  location          String?
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  chargeSession     ChargingSessions @relation(fields: [ChargingSessionId], references: [id])
+}
+
+model ChargerConfigs {
+  id         BigInt   @id @default(autoincrement())
+  chargerId  BigInt
+  key        String?
+  value      String?
+  readonly   Boolean
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  charger    Chargers @relation(fields: [chargerId], references: [id])
+}
+
+model Amenities {
+  id         BigInt           @id @default(autoincrement())
+  name       String           @unique
+  created_at DateTime         @default(now())
+  updated_at DateTime         @updatedAt
+  properties HostProperties[] // Establishing the relationship
+
+  @@index([name], map: "index_amenities_name")
+}

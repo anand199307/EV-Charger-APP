@@ -1,0 +1,56 @@
+{
+    "connectors":[
+        {
+            "id":1,
+            "name":"TYPE 1"
+        },
+        {
+            "id":2,
+            "name":"TYPE 2"
+        },
+        {
+            "id":3,
+            "name":"Tesla(Roadster)"
+        },
+        {
+            "id":4,
+            "name":"Tesla"
+        },
+        {
+            "id":5,
+            "name":"Wall(AU/NZ)"
+        },
+        {
+            "id":6,
+            "name":"Wall(Euro)"
+        },
+        {
+            "id":7,
+            "name":"Wall(BS1363)"
+        },
+        {
+            "id":8,
+            "name":"Wall"
+        },
+        {
+            "id":9,
+            "name":"GB/T(Fast)"
+        },
+        {
+            "id":10,
+            "name":"GB/T"
+        },
+        {
+            "id":11,
+            "name":"CHAdeMO"
+        },
+        {
+            "id":12,
+            "name":"CCS 1"
+        },
+        {
+            "id":13,
+            "name":"CCS 2"
+        }
+    ]
+}

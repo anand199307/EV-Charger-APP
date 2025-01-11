@@ -1,0 +1,28 @@
+{
+    "amenities":[
+        {
+            "id": 1,
+            "name": "Restroom" 
+        },
+        {
+            "id": 2,
+            "name": "Food stalls" 
+        },
+        {
+            "id": 2,
+            "name": "Parking" 
+        },
+        {
+            "id": 3,
+            "name": "Air filler" 
+        },
+        {
+            "id": 4,
+            "name": "Wi-Fi" 
+        },
+        {
+            "id": 5,
+            "name": "Stores" 
+        }
+    ]
+}
